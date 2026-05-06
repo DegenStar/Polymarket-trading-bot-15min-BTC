@@ -42,7 +42,7 @@ cd Polymarket-trading-bot-15min-BTC
 
 ### 2. 安装依赖
 
-- 📌 **Linux / macOS / WSL 用户**
+- 📌 **Linux / macOS / WSL2 用户**
 ```bash
 # 自动识别所在系统来配置环境并安装缺失的依赖
 ./install.sh

@@ -43,7 +43,7 @@ cd Polymarket-trading-bot-15min-BTC
 
 ### 2. Install dependencies
 
-- 📌 **Linux / macOS / WSL**
+- 📌 **Linux / macOS / WSL2**
 ```bash
 # Automatically check/install missing dependencies and configure env
 ./install.sh
