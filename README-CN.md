@@ -67,9 +67,9 @@ cp .env.example .env
 | 变量 | 描述 | 如何获取 |
 |----------|-------------|---------------|
 | `POLYMARKET_PRIVATE_KEY` | 你的钱包私钥（以 `0x` 开头） | 从你的钱包（MetaMask 等）导出，或使用与你的 Polymarket 账户关联的私钥 |
-| `POLYMARKET_API_KEY` | Polymarket CLOB 的 API Key | 运行 `poetry run python -m src.generate_api_key` |
-| `POLYMARKET_API_SECRET` | Polymarket CLOB 的 API Secret | 运行 `poetry run python -m src.generate_api_key` |
-| `POLYMARKET_API_PASSPHRASE` | Polymarket CLOB 的 API Passphrase | 运行 `poetry run python -m src.generate_api_key` |
+| `POLYMARKET_API_KEY` | Polymarket CLOB 的 API Key | 运行 `python -m src.generate_api_key` |
+| `POLYMARKET_API_SECRET` | Polymarket CLOB 的 API Secret | 运行 `python -m src.generate_api_key` |
+| `POLYMARKET_API_PASSPHRASE` | Polymarket CLOB 的 API Passphrase | 运行 `python -m src.generate_api_key` |
 
 #### 钱包配置
 
@@ -92,7 +92,7 @@ cp .env.example .env
 
 **常见错误：** 将 `POLYMARKET_FUNDER` 设置为你的 Polygon 钱包地址（你链上持有 USDC 的地方），而不是 Polymarket 代理地址。这会导致 `"invalid signature"` 错误。
 
-**如何验证：** 运行 `poetry run python -m src.test_balance`：
+**如何验证：** 运行 `python -m src.test_balance`：
 - "Getting USDC balance" 通过 Polymarket API 显示余额（应显示你的资金）。
 - "Balance on-chain" 直接查询 Polygon 链（如果你的资金在代理中，可能显示 $0，这是正常的）。
 
@@ -150,7 +150,7 @@ POLYMARKET_PRIVATE_KEY=0x你的私钥填在这里
 ### 第二步：运行 API Key 生成器
 
 ```
-poetry run python -m src.generate_api_key
+python -m src.generate_api_key
 ```
 
 它将输出类似以下内容：
@@ -177,7 +177,7 @@ POLYMARKET_API_PASSPHRASE=mypassphrase
 如果你遇到 `"invalid signature"`（签名无效）错误，请运行诊断工具：
 
 ```
-poetry run python -m src.diagnose_config
+python -m src.diagnose_config
 ```
 
 这将检查：
@@ -202,7 +202,7 @@ poetry run python -m src.diagnose_config
 在开始交易前，验证你的钱包配置是否正确且有资金：
 
 ```
-poetry run python -m src.test_balance
+python -m src.test_balance
 ```
 
 输出示例：
@@ -249,7 +249,7 @@ API Passphrase: ✓
 确保 `.env` 中的 `DRY_RUN=true`，然后运行：
 
 ```
-poetry run python -m src.simple_arb_bot
+python -m src.simple_arb_bot
 ```
 
 机器人将扫描机会，但不会下达真实订单。
@@ -273,7 +273,7 @@ POLYMARKET_WS_URL=wss://ws-subscriptions-clob.polymarket.com
 然后以同样的方式运行机器人：
 
 ```
-poetry run python -m src.simple_arb_bot
+python -m src.simple_arb_bot
 ```
 
 ### 实盘交易模式：
@@ -282,7 +282,7 @@ poetry run python -m src.simple_arb_bot
 2. 确保你的 Polymarket 钱包中有 USDC
 3. 运行：
 ```
-poetry run python -m src.simple_arb_bot
+python -m src.simple_arb_bot
 ```
 
 ### 成对执行安全机制（避免“单边成交”）
@@ -442,18 +442,18 @@ Bot/
 - 检查错误消息以获取具体问题
 - 验证 `.env` 文件格式
 - 确保所有必需字段均已设置
-- 运行 `poetry run python -m src.diagnose_config` 获取详细诊断
+- 运行 `python -m src.diagnose_config` 获取详细诊断
 
 ### "Invalid signature"（签名无效）错误
 - 验证 `POLYMARKET_SIGNATURE_TYPE` 是否匹配你的钱包类型
-- 使用 `poetry run python -m src.generate_api_key` 重新生成 API 凭据
+- 使用 `python -m src.generate_api_key` 重新生成 API 凭据
 - Magic.link 用户：确保 `POLYMARKET_FUNDER` 设置正确
-- 运行 `poetry run python -m src.diagnose_config` 获取详细诊断
+- 运行 `python -m src.diagnose_config` 获取详细诊断
 
 ### 余额显示 $0 但我有资金
 - 检查你的私钥是否对应于有资金的钱包
 - 对于 Magic.link：私钥对应的是你的 EOA，而非代理钱包
-- 运行 `poetry run python -m src.test_balance` 查看你的钱包地址
+- 运行 `python -m src.test_balance` 查看你的钱包地址
 - 验证 Magic.link 账户是否设置了 `POLYMARKET_FUNDER`
 
 ### "No active BTC 15min market found"（未发现活跃的比特币15分钟市场）
@@ -489,9 +489,9 @@ Bot/
 - [py-clob-client 文档](https://github.com/Polymarket/py-clob-client)
 
 ### 实用工具
-- `poetry run python -m src.generate_api_key` - 生成 API 凭据
-- `poetry run python -m src.test_balance` - 验证钱包配置和余额
-- `poetry run python -m src.diagnose_config` - 诊断配置问题
+- `python -m src.generate_api_key` - 生成 API 凭据
+- `python -m src.test_balance` - 验证钱包配置和余额
+- `python -m src.diagnose_config` - 诊断配置问题
 
 ---
 
