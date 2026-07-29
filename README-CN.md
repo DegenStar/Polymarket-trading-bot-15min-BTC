@@ -51,8 +51,7 @@ cd Polymarket-trading-bot-15min-BTC
 - 📌 **Windows 用户**
 ```powershell
 # 以管理员身份运行 PowerShell，然后在项目根目录执行
-Set-ExecutionPolicy Bypass -Scope CurrentUser -Force
-.\install.ps1
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
 ### 3. 复制示例环境变量文件
